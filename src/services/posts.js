@@ -31,23 +31,29 @@ export async function listPostsByTag(tags, options) {
   return await listPosts({ tags }, options)
 }
 
-// Get single post
+// THE GET SINGLE POST
 export async function getPostById(postId) {
   return await Post.findById(postId)
 }
 
 // UPDATE
-export async function updatePost(postId, update) {
-  // Remove undefined fields from the update object
-  const updateFields = {}
+export async function updatePost(postId, updates) {
+  // Get the fields to update
+  const updatedFields = {}
   for (const key of ['title', 'author', 'contents', 'tags']) {
-    if (update[key] !== undefined) {
-      updateFields[key] = update[key]
+    if (updates[key] !== undefined) {
+      updatedFields[key] = updates[key]
     }
   }
+  // Do the update
   return await Post.findOneAndUpdate(
     { _id: postId },
-    { $set: updateFields },
+    { $set: updatedFields },
     { new: true, runValidators: true },
   )
+}
+
+// DELETE
+export async function deletePost(postId) {
+  return await Post.deleteOne({ _id: postId })
 }
